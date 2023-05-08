@@ -14,27 +14,27 @@
    },
    "content_scripts": [ {
       "css": [ "css/content.css" ],
-      "js": [ "js/jquery.min.js", "js/getticket_thsrc.js" ],
+      "js": [ "js/jquery.min.js", "js/getticket_thsrc.js", "js/ocr.js" ],
       "matches": [ "https://irs.thsrc.com.tw/IMINT/?wicket:interface=:*" ]
    }, {
       "css": [ "css/content.css" ],
-      "js": [ "js/jquery.min.js", "js/getticket_railway.js" ],
+      "js": [ "js/jquery.min.js", "js/getticket_railway.js", "js/ocr.js" ],
       "matches": [ "https://www.railway.gov.tw/*" ]
    }, {
       "css": [ "css/content.css" ],
-      "js": [ "js/jquery.min.js", "js/getticket_tms.js" ],
+      "js": [ "js/jquery.min.js", "js/getticket_tms.js", "js/ocr.js" ],
       "matches": [ "https://sports.tms.gov.tw/order/*", "https://vbs.sports.taipei/order/*" ]
    }, {
       "css": [ "css/content.css" ],
-      "js": [ "js/jquery.min.js", "js/getticket_tixcraft.js" ],
+      "js": [ "js/jquery.min.js", "js/getticket_tixcraft.js", "js/ocr.js" ],
       "matches": [ "https://tixcraft.com/ticket/*", "https://tixcraft.com/activity/*", "https://tixcraft.com/game/*", "https://teamear.tixcraft.com/ticket/*", "https://teamear.tixcraft.com/activity/*", "https://teamear.tixcraft.com/game/*" ]
    }, {
       "css": [ "css/content.css" ],
-      "js": [ "js/jquery.min.js", "js/getticket_ibon.js" ],
+      "js": [ "js/jquery.min.js", "js/ocr.js" ,"js/getticket_ibon.js" ],
       "matches": [ "https://ticket.ibon.com.tw/ActivityInfo/*", "https://orders.ibon.com.tw/application/*" ]
    }, {
       "css": [ "css/content.css" ],
-      "js": [ "js/jquery.min.js", "js/getticket_kktix.js" ],
+      "js": [ "js/jquery.min.js", "js/getticket_kktix.js", "js/ocr.js" ],
       "matches": [ "https://*.kktix.cc/events/*", "https://kktix.com/events/*" ]
    } ],
    "description": "快速填入表單 自動送出等等 搶票訂票小工具 方便快速訂票搶票  內含辨識程式",

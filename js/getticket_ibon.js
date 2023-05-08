@@ -1,4 +1,4 @@
-$(()=> {
+$(()=> { 
   chrome.storage.local.get([ //取得瀏覽器擴充本地儲存
     "ibon_quick",
     "ibon_date",
@@ -13,6 +13,33 @@ $(()=> {
     "ibon_autosend",
     "ibon_ticketcount"
 ], (result)=> {
+    // console.log('Tesseract:', Tesseract);
+    // var tesseract = new Tesseract();
+
+    async function ocr(image){
+        try {
+            // 從 Tesseract 包中創建一個 worker 對象
+            const { createWorker } = Tesseract;
+            console.log(Tesseract)
+            const worker = await createWorker();
+            // 加載 Tesseract 語言庫
+            await worker.loadLanguage('eng');
+            // 初始化語言庫
+            await worker.initialize('eng');
+            
+            // 設置 Tesseract 的參數
+            await worker.setParameters({
+                tessedit_char_whitelist: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            })
+    
+            // 使用 Tesseract 進行圖像識別
+            const {data} = await worker.recognize(image);
+            return data.text;
+        } catch (error) {
+            // 如果發生錯誤，則將錯誤消息發送回客戶端
+            console.log(error);
+        }
+    }
 
       if(result.ibon_quick) { //如果插件是啟動的
 
@@ -49,7 +76,14 @@ $(()=> {
             }
             let captchf=(captchf_version)=>{
                 if(captchf_version=="new"){
-                    getocrimg($('#chk_pic')[0].src,(ocrstring)=>{
+                    const imagePath = $('#chk_pic')[0].src;
+                    ocr(imagePath).then((result) => {
+                        console.log(result);
+                    }).catch((err) => {
+                        console.log(err);
+                    });
+
+                    getocrimg(imagePath,(ocrstring)=>{
                         sendanser(captchf_version,ocrstring);
                     });
                 }
