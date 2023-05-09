@@ -13,12 +13,13 @@ $(()=> {
     "ibon_autosend",
     "ibon_ticketcount"
 ], (result)=> {
+    
     async function ocr(image){
         try {
             
             const worker = await Tesseract.createWorker();
             await worker.load();
-
+            
             // 加載 Tesseract 語言庫
             await worker.loadLanguage('eng');
             // 初始化語言庫
@@ -26,12 +27,24 @@ $(()=> {
             
             // 設置 Tesseract 的參數
             await worker.setParameters({
-                tessedit_char_whitelist: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+                preserve_interword_spaces: '0',                
+                user_defined_dpi: '150',
+                tessedit_char_whitelist: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+                tessedit_ocr_engine_mode: Tesseract.PSM.LSTM_ONLY,
+                tessedit_pageseg_mode: Tesseract.PSM_SINGLE_BLOCK
             })
     
+            let counter = 1;
+            let resultText = '';
             // 使用 Tesseract 進行圖像識別
-            const {data} = await worker.recognize(image);
-            return data.text;
+            do{
+                const {data} = await worker.recognize(image);
+                
+                resultText = data.text.trim();
+                counter++;
+            } while(resultText.length !== 4 && counter < 10);
+            
+            return resultText;
         } catch (error) {
             // 如果發生錯誤，則將錯誤消息發送回客戶端
             console.log(error);
@@ -43,45 +56,14 @@ $(()=> {
           if(window.location.href.indexOf("ActivityInfo/Details")>0) {
           }
           else if($("div[class='step-grid active']").text().indexOf("座位/數量")>0) {
-
-            const getocrimg = async(url,callback)=>{ //傳送圖片
-                const img = new Image();
-                img.onload = function(e) {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    chrome.runtime.sendMessage(
-                        {
-                            type:"predit",
-                            saveimage:Array.from(imageData.data),   
-                            width: img.width,
-                            height: img.height},
-                          (response) => {
-                              callback(response);
-                          });
-                };
-                const timestamp = Date.now(); // 取得當前時間戳記
-                img.src = `${url}?t=${timestamp}`; // 加上時間戳記             
-            }
-
-            let x=0;
-            let sendanser=(captchf_version,ocrstring)=>{
-                $('#ctl00_ContentPlaceHolder1_CHK').val(ocrstring);
-            }
             let captchf=(captchf_version)=>{
                 if(captchf_version=="new"){
                     const imagePath = $('#chk_pic')[0].src;
                     ocr(imagePath).then((result) => {
-                        console.log(result);
+                        const chk = $('#ctl00_ContentPlaceHolder1_CHK')[0];
+                        chk.value = result;
                     }).catch((err) => {
                         console.log(err);
-                    });
-
-                    getocrimg(imagePath,(ocrstring)=>{
-                        sendanser(captchf_version,ocrstring);
                     });
                 }
             }
