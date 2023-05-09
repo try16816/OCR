@@ -13,15 +13,12 @@ $(()=> {
     "ibon_autosend",
     "ibon_ticketcount"
 ], (result)=> {
-    // console.log('Tesseract:', Tesseract);
-    // var tesseract = new Tesseract();
-
     async function ocr(image){
         try {
-            // 從 Tesseract 包中創建一個 worker 對象
-            const { createWorker } = Tesseract;
-            console.log(Tesseract)
-            const worker = await createWorker();
+            
+            const worker = await Tesseract.createWorker();
+            await worker.load();
+
             // 加載 Tesseract 語言庫
             await worker.loadLanguage('eng');
             // 初始化語言庫
